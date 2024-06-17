@@ -3,7 +3,7 @@ package http_result
 import (
 	"github.com/goravel/framework/contracts/console"
 	"github.com/goravel/framework/contracts/foundation"
-	"goravel/packages/http_result/commands"
+	"github.com/hulutech-web/http_result/commands"
 )
 
 const Binding = "http_result"

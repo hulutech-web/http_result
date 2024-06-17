@@ -1,8 +1,8 @@
 package facades
 
 import (
-	"goravel/packages/http_result"
-	"goravel/packages/http_result/contracts"
+	"github.com/hulutech-web/http_result"
+	"github.com/hulutech-web/http_result/contracts"
 	"log"
 )
 
