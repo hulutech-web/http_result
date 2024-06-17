@@ -10,7 +10,23 @@ go get -u github.com:hulutech-web/http_result
 go run . artisan vendor:publish --package=github.com:hulutech-web/http_result
 
 ```
-##### 1.2 使用说明:自定义默认返回
+##### 1.2 注册服务提供者:config/app.go
+```go
+import	"github.com:hulutech-web/http_result"
+
+func init() {
+"providers": []foundation.ServiceProvider{
+	....
+	&http_result.ServiceProvider{},
+	
+}
+	
+}
+
+```
+#### 二、使用
+
+##### 2.1 使用说明:自定义默认返回
 发布资源后，config/http_result.go中的配置文件中有默认的返回状态码和message，可自行修改
 ```go
 config.Add("http_result", map[string]any{
