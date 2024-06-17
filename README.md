@@ -2,7 +2,7 @@
 
 #### 一、安装
 ```go
-go get -u github.com:hulutech-web/http_result
+go get -u github.com/hulutech-web/http_result
 
 ```
 ##### 1.1发布资源  
