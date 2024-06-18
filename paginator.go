@@ -50,9 +50,9 @@ func (h *HttpResult) SearchByParams(params map[string]string, excepts ...string)
 	return h
 }
 
-func (r *HttpResult) ResultPagination(ctx http.Context, dest any) (http.Response, error) {
-	r.Context = ctx
-	request := ctx.Request()
+func (r *HttpResult) ResultPagination(dest any) (http.Response, error) {
+	request := r.Context.Request()
+	ctx:=r.Context
 	pageSize := request.Query("pageSize", "10")
 	pageSizeInt := cast.ToInt(pageSize)
 	currentPage := request.Query("currentPage", "1")

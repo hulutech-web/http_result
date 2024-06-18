@@ -16,7 +16,7 @@ type Instance interface {
 	Error(code int, message string, data interface{}) http.Response
 	ValidError(message string, errors map[string]map[string]string) http.Response
 	SearchByParams(params map[string]string, excepts ...string) *HttpResult
-	ResultPagination(ctx http.Context, dest any) (http.Response, error)
+	ResultPagination(dest any) (http.Response, error)
 }
 
 type HttpResult struct {
