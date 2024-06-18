@@ -56,7 +56,7 @@ func (r *UserController) Indexs(ctx http.Context) http.Response {
 	users := []models.User{}
 	facades.Orm().Query().Model(&models.User{}).Find(&users)
 	request := ctx.Request()
-	result, err := httpfacades.NewResult(ctx).SearchByParams(request.Queries()).ResultPagination(ctx, &users)
+	result, err := httpfacades.NewResult(ctx).SearchByParams(request.Queries()).ResultPagination(&users)
 	if err != nil {
 		return nil
 	}
