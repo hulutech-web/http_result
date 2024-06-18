@@ -1,6 +1,7 @@
 package http_result
 
 import (
+	"github.com/goravel/framework/contracts/database/orm"
 	"github.com/goravel/framework/contracts/http"
 	"github.com/goravel/framework/facades"
 )
@@ -14,10 +15,12 @@ type Instance interface {
 	Success(message string, data interface{}) http.Response
 	Error(code int, message string, data interface{}) http.Response
 	ValidError(message string, errors map[string]map[string]string) http.Response
+	SearchByParams(params map[string]string, excepts ...string) func(methods orm.Query) orm.Query
 }
 
 type HttpResult struct {
-	ctx      http.Context
+	Query    orm.Query
+	Context  http.Context
 	Code     int         `json:"code"`
 	Message  string      `json:"message"`
 	Data     interface{} `json:"data,omitempty"`
@@ -26,7 +29,7 @@ type HttpResult struct {
 
 func NewResult(ctx http.Context) *HttpResult {
 	return &HttpResult{
-		ctx: ctx,
+		Context: ctx,
 	}
 }
 
@@ -37,7 +40,7 @@ func (h *HttpResult) Success(message string, data interface{}) http.Response {
 	if message == "" {
 		message = facades.Config().GetString("http_result.Message")
 	}
-	return h.ctx.Response().Success().Json(http.Json{
+	return h.Context.Response().Success().Json(http.Json{
 		"message": message,
 		"data":    data,
 	})
@@ -55,7 +58,7 @@ func (h *HttpResult) Error(code int, message string, data interface{}) http.Resp
 	if code == 0 {
 		code = facades.Config().GetInt("http_result.Code")
 	}
-	h.ctx.Request().AbortWithStatusJson(code, http.Json{
+	h.Context.Request().AbortWithStatusJson(code, http.Json{
 		"message": message,
 		"data":    data,
 	})
@@ -72,7 +75,7 @@ func (h *HttpResult) ValidError(message string, errors map[string]map[string]str
 	if message == "" {
 		message = facades.Config().GetString("http_result.Message", "验证失败")
 	}
-	h.ctx.Request().AbortWithStatusJson(h.Code, http.Json{
+	h.Context.Request().AbortWithStatusJson(h.Code, http.Json{
 		"message": message,
 		"errors":  errors,
 	})

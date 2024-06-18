@@ -7,12 +7,12 @@ go get -u github.com/hulutech-web/http_result
 ```
 ##### 1.1发布资源  
 ```go
-go run . artisan vendor:publish --package=github.com:hulutech-web/http_result
+go run . artisan vendor:publish --package=github.com/hulutech-web/http_result
 
 ```
 ##### 1.2 注册服务提供者:config/app.go
 ```go
-import	"github.com:hulutech-web/http_result"
+import	"github.com/hulutech-web/http_result"
 
 func init() {
 "providers": []foundation.ServiceProvider{
