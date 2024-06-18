@@ -29,7 +29,7 @@ func (receiver *ServiceProvider) Boot(app foundation.Application) {
 	app.Commands([]console.Command{
 		commands.NewPublishHttpResult(),
 	})
-	app.Publishes("./packages/http_result", map[string]string{
+	app.Publishes("github.com/hulutech-web/http_result", map[string]string{
 		"config/http_result.go": app.ConfigPath("http_result.go"),
 	})
 }
