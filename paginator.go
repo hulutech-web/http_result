@@ -68,9 +68,9 @@ func (r *HttpResult) ResultPagination(dest any) (http.Response, error) {
 	// Corrected links generation
 	links := Links{
 		First: proto + request.Origin().Host + URL_PATH + "?pageSize=" + pageSize + "&currentPage=1",
-		Last:  proto + request.Origin().Host + URL_PATH + pageSize + "&currentPage=" + strconv.Itoa(int(total)/pageSizeInt),
-		Prev:  proto + request.Origin().Host + URL_PATH + pageSize + "&currentPage=" + strconv.Itoa(currentPageInt-1),
-		Next:  proto + request.Origin().Host + URL_PATH + pageSize + "&currentPage=" + strconv.Itoa(currentPageInt+1),
+		Last:  proto + request.Origin().Host + URL_PATH + "?pageSize="+ pageSize + "&currentPage=" + strconv.Itoa(int(total)/pageSizeInt),
+		Prev:  proto + request.Origin().Host + URL_PATH + "?pageSize="+ pageSize + "&currentPage=" + strconv.Itoa(currentPageInt-1),
+		Next:  proto + request.Origin().Host + URL_PATH + "?pageSize="+ pageSize + "&currentPage=" + strconv.Itoa(currentPageInt+1),
 	}
 
 	// Corrected total page calculation

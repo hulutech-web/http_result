@@ -105,10 +105,10 @@ func (r *UserController) Indexs(ctx http.Context) http.Response {
 //],
 //"total": 1,
 //"links": {
-//"first": "http://localhost:3000//api/user/indexs?pageSize=2&currentPage=1",
-//"last": "http://localhost:3000//api/user/indexs2&currentPage=0",
-//"prev": "http://localhost:3000//api/user/indexs2&currentPage=0",
-//"next": "http://localhost:3000//api/user/indexs2&currentPage=2"
+//"first": "http://localhost:3000/api/user/indexs?pageSize=2&currentPage=1",
+//"last": "http://localhost:3000/api/user/indexs2&currentPage=0",
+//"prev": "http://localhost:3000/api/user/indexs2&currentPage=0",
+//"next": "http://localhost:3000/api/user/indexs2&currentPage=2"
 //},
 //"meta": {
 //"total_page": 1,
@@ -145,10 +145,10 @@ func (r *UserController) Indexs(ctx http.Context) http.Response {
     ],
     "total": 1,
     "links": {
-        "first": "http://localhost:3000//api/user/indexs?pageSize=2&currentPage=1",
-        "last": "http://localhost:3000//api/user/indexs2&currentPage=0",
-        "prev": "http://localhost:3000//api/user/indexs2&currentPage=0",
-        "next": "http://localhost:3000//api/user/indexs2&currentPage=2"
+        "first": "http://localhost:3000/api/user/indexs?pageSize=2&currentPage=1",
+        "last": "http://localhost:3000/api/user/indexs2&currentPage=0",
+        "prev": "http://localhost:3000/api/user/indexs2&currentPage=0",
+        "next": "http://localhost:3000/api/user/indexs2&currentPage=2"
     },
     "meta": {
         "total_page": 1,
