@@ -82,41 +82,7 @@ func (r *UserController) Indexs(ctx http.Context) http.Response {
 // @Param  currentPage  query  string  false  "currentPage"
 // @Param  sort  query  string  false  "sort"
 // @Param  order  query  string  false  "order"
-// @Success 200 {string} json {
-//"data": [
-//{
-//"id": 6,
-//"created_at": "2024-05-19 11:22:22",
-//"updated_at": "2024-05-19 11:22:22",
-//"name": "Karolann Waelchi",
-//"mobile": "Annalise Koss",
-//"password": "eyJpdiI6Im5JbVNXQ2pWV0FOVkxFTG0iLCJ2YWx1ZSI6IkJKYTc5bWt0WWRrUFRPYVJlMW5NcWN0SXFWK29iYVBqIn0=",
-//"area": "",
-//"contact": "Juana Russel",
-//"contact_mobile": "9210102772",
-//"address": "95469 New Bypassshire",
-//"id_card": "4034197872575788",
-//"control_arr": null,
-//"pid": 0,
-//"parent": null,
-//"children": null,
-//"deleted_at": null
-//}
-//],
-//"total": 1,
-//"links": {
-//"first": "http://localhost:3000/api/user/indexs?pageSize=2&currentPage=1",
-//"last": "http://localhost:3000/api/user/indexs2&currentPage=0",
-//"prev": "http://localhost:3000/api/user/indexs2&currentPage=0",
-//"next": "http://localhost:3000/api/user/indexs2&currentPage=2"
-//},
-//"meta": {
-//"total_page": 1,
-//"current_page": 1,
-//"per_page": 2,
-//"total": 1
-//}
-//}
+// @Success 200 {string} json {}
 // @Router       /api/user [get]
 ```
 
