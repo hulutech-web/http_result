@@ -54,16 +54,14 @@ httpfacades.NewResult(ctx).ValidError("验证失败", errors.All())
 ```go
 func (r *UserController) Indexs(ctx http.Context) http.Response {
 	users := []models.User{}
-	facades.Orm().Query().Model(&models.User{}).Find(&users)
-	request := ctx.Request()
-	result, err := httpfacades.NewResult(ctx).SearchByParams(request.Queries()).ResultPagination(&users)
-	if err != nil {
-		return nil
-	}
+	queries := ctx.Request().Queries()
+	result, _ := httpfacades.NewResult(ctx).SearchByParams(queries,[]string{"excepts"}...).ResultPagination(&users, []string{"Dept"}...)
 	return result
 }
 ```
+
 说明： 配合前端表格渲染，其中固定参数为pageSize,currentPage,sort,order，其他参数将默认采用like模糊查询
+##### SearchByParams添加排除模糊搜索的字段，ResultPagination添加关联查询并返回（需在模型中定义关联）
 ##### example：?name=xxx&pageSize=10&currentPage=1&sort=age&order=desc
 ##### 解释一：根据表中的列name模糊查询，每页10条，当前第一页，按照age列降序排列
 ##### 解释二：查询参数：order仅支持asc,desc默认采用asc,sort表示需要查询的列，order参数和sort参数需要同时出现
