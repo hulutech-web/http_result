@@ -5,12 +5,7 @@
 go get -u github.com/hulutech-web/http_result
 
 ```
-##### 1.1发布资源  
-```go
-go run . artisan vendor:publish --package=github.com/hulutech-web/http_result
-
-```
-##### 1.2 注册服务提供者:config/app.go
+##### 1.1 注册服务提供者:config/app.go
 ```go
 import	"github.com/hulutech-web/http_result"
 
@@ -18,12 +13,16 @@ func init() {
 "providers": []foundation.ServiceProvider{
 	....
 	&http_result.ServiceProvider{},
-	
 }
-	
 }
 
 ```
+##### 1.2发布资源  
+```go
+go run . artisan vendor:publish --package=github.com/hulutech-web/http_result
+
+```
+
 #### 二、使用
 
 ##### 2.1 使用说明:自定义默认返回
@@ -38,12 +37,13 @@ config.Add("http_result", map[string]any{
 ##### 方式一：
 一、成功返回：
 ```
-import httpfacades "git@github.com:hulutech-web/http_result.git"
+import	httpfacades "github.com/hulutech-web/http_result"
+
 return httpfacades.NewResult(ctx).Success("", user)
 ```
 二、失败返回：
 ```go
-import httpfacades "git@github.com:hulutech-web/http_result.git"
+import	httpfacades "github.com/hulutech-web/http_result"
 httpfacades.NewResult(ctx).Error(500, "用户不存在", "no users find")
 ```
 三、表单验证错误：
