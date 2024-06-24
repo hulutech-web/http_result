@@ -58,7 +58,7 @@ func (r *HttpResult) ResultPagination(dest any,withes ...string) (http.Response,
 	currentPageInt := cast.ToInt(currentPage)
 	total := int64(0)
 	for _, with := range withes {
-	    r.Query.With(with)
+	   r.Query =  r.Query.With(with)
 	}
 	r.Query.Paginate(currentPageInt, pageSizeInt, dest, &total)
 
