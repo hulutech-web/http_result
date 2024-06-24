@@ -61,7 +61,7 @@ func (r *HttpResult) ResultPagination(dest any,withes ...string) (http.Response,
 	for _, with := range withes {
 	    r.Query.With(with)
 	}
-	r.Query.Model(dest).Paginate(currentPageInt, pageSizeInt, dest, &total)
+	r.Query.Paginate(currentPageInt, pageSizeInt, dest, &total)
 
 	URL_PATH := ctx.Request().Origin().URL.Path
 	var proto = "http://"
