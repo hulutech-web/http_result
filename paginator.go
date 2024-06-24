@@ -50,7 +50,7 @@ func (h *HttpResult) SearchByParams(params map[string]string, excepts ...string)
 	return h
 }
 
-func (r *HttpResult) ResultPagination(dest any) (http.Response, error) {
+func (r *HttpResult) ResultPagination(dest any,withes ...string) (http.Response, error) {
 	request := r.Context.Request()
 	ctx:=r.Context
 	pageSize := request.Query("pageSize", "10")
@@ -58,6 +58,9 @@ func (r *HttpResult) ResultPagination(dest any) (http.Response, error) {
 	currentPage := request.Query("currentPage", "1")
 	currentPageInt := cast.ToInt(currentPage)
 	total := int64(0)
+	for _, with := range withes {
+	    r.Query.With(with)
+	}
 	r.Query.Model(dest).Paginate(currentPageInt, pageSizeInt, dest, &total)
 
 	URL_PATH := ctx.Request().Origin().URL.Path
