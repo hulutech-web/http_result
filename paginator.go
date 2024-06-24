@@ -62,7 +62,7 @@ func (r *HttpResult) ResultPagination(dest any,withes ...string) (http.Response,
 	}
 	r.Query.Paginate(currentPageInt, pageSizeInt, dest, &total)
 
-	URL_PATH := ctx.Request().Origin().URL.Path
+	URL_PATH := r.Context.Request().Origin().URL.Path
 	var proto = "http://"
 	if request.Origin().TLS != nil {
 		proto = "https://"
