@@ -1,8 +1,11 @@
 module github.com/hulutech-web/http_result
 
-go 1.21.11
+go 1.23.1
 
-require github.com/goravel/framework v1.14.1
+require (
+	github.com/goravel/framework v1.14.7
+	github.com/spf13/cast v1.6.0
+)
 
 require (
 	atomicgo.dev/cursor v0.2.0 // indirect
@@ -116,7 +119,6 @@ require (
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
-	github.com/spf13/cast v1.6.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.19.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
