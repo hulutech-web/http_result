@@ -42,7 +42,9 @@ func (h *HttpResult) SearchByParams(params map[string]string, excepts ...string)
 			if value == "" || key == "pageSize" || key == "total" || key == "currentPage" || key == "sort" || key == "order" {
 				continue
 			} else {
-				q = q.Where(key+" like ?", "%"+value+"%")
+				//q:=gorm.Expr(key+" like ?", "%"+value+"%")
+				//q = q.Where(key+" like ?", "%"+value+"%")
+				q = q.Raw(key+" like ?", "%"+value+"%").(orm.Query)
 			}
 		}
 		return q
@@ -50,7 +52,7 @@ func (h *HttpResult) SearchByParams(params map[string]string, excepts ...string)
 	return h
 }
 
-func (r *HttpResult) ResultPagination(dest any,withes ...string) (http.Response, error) {
+func (r *HttpResult) ResultPagination(dest any, withes ...string) (http.Response, error) {
 	request := r.Context.Request()
 	pageSize := request.Query("pageSize", "10")
 	pageSizeInt := cast.ToInt(pageSize)
@@ -58,7 +60,7 @@ func (r *HttpResult) ResultPagination(dest any,withes ...string) (http.Response,
 	currentPageInt := cast.ToInt(currentPage)
 	total := int64(0)
 	for _, with := range withes {
-	   r.Query =  r.Query.With(with)
+		r.Query = r.Query.With(with)
 	}
 	r.Query.Paginate(currentPageInt, pageSizeInt, dest, &total)
 
@@ -70,9 +72,9 @@ func (r *HttpResult) ResultPagination(dest any,withes ...string) (http.Response,
 	// Corrected links generation
 	links := Links{
 		First: proto + request.Origin().Host + URL_PATH + "?pageSize=" + pageSize + "&currentPage=1",
-		Last:  proto + request.Origin().Host + URL_PATH + "?pageSize="+ pageSize + "&currentPage=" + strconv.Itoa(int(total)/pageSizeInt),
-		Prev:  proto + request.Origin().Host + URL_PATH + "?pageSize="+ pageSize + "&currentPage=" + strconv.Itoa(currentPageInt-1),
-		Next:  proto + request.Origin().Host + URL_PATH + "?pageSize="+ pageSize + "&currentPage=" + strconv.Itoa(currentPageInt+1),
+		Last:  proto + request.Origin().Host + URL_PATH + "?pageSize=" + pageSize + "&currentPage=" + strconv.Itoa(int(total)/pageSizeInt),
+		Prev:  proto + request.Origin().Host + URL_PATH + "?pageSize=" + pageSize + "&currentPage=" + strconv.Itoa(currentPageInt-1),
+		Next:  proto + request.Origin().Host + URL_PATH + "?pageSize=" + pageSize + "&currentPage=" + strconv.Itoa(currentPageInt+1),
 	}
 
 	// Corrected total page calculation
