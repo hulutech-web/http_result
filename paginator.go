@@ -32,7 +32,7 @@ type PageResult struct {
 
 // SearchByParams
 // ?name=xxx&pageSize=1&currentPage=1&sort=xxx&order=xxx
-func (h *HttpResult) SearchByParams(params map[string]string, excepts ...string) *HttpResult {
+func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[string]interface{}, excepts ...string) *HttpResult {
 	for _, except := range excepts {
 		delete(params, except)
 	}
@@ -46,6 +46,9 @@ func (h *HttpResult) SearchByParams(params map[string]string, excepts ...string)
 				//q = q.Where(key+" like ?", "%"+value+"%")
 				q = q.Raw(key+" like ?", "%"+value+"%").(orm.Query)
 			}
+		}
+		for key, val := range conditionMap {
+			q = q.Raw(key+" = ?", val).(orm.Query)
 		}
 		return q
 	}(query)
