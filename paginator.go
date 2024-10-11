@@ -5,6 +5,7 @@ import (
 	"github.com/goravel/framework/contracts/http"
 	"github.com/goravel/framework/facades"
 	"github.com/spf13/cast"
+	"gorm.io/gorm"
 	"math"
 	"strconv"
 )
@@ -37,17 +38,18 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 		delete(params, except)
 	}
 	query := facades.Orm().Query()
-	for key, val := range conditionMap {
-		query = query.Raw(key+" = ?", val).(orm.Query)
-	}
+
+	// 再处理url查询
 	h.Query = func(q orm.Query) orm.Query {
+		// 先处理过滤条件
+		for key, val := range conditionMap {
+			q = q.Where(key+" = ?", val).(orm.Query)
+		}
 		for key, value := range params {
 			if value == "" || key == "pageSize" || key == "total" || key == "currentPage" || key == "sort" || key == "order" {
 				continue
 			} else {
-				//q:=gorm.Expr(key+" like ?", "%"+value+"%")
-				//q = q.Where(key+" like ?", "%"+value+"%")
-				q = q.Raw(key+" like ?", "%"+value+"%").(orm.Query)
+				q = q.Where(key, gorm.Expr(" like ? %"+value+"%"))
 			}
 		}
 		return q
