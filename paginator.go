@@ -49,7 +49,7 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 			if value == "" || key == "pageSize" || key == "total" || key == "currentPage" || key == "sort" || key == "order" {
 				continue
 			} else {
-				q = q.Where(key, gorm.Expr(" like ? %"+value+"%"))
+				q = q.Where(key, gorm.Expr(" like  %"+value+"%"))
 			}
 		}
 		return q
