@@ -50,13 +50,21 @@ httpfacades.NewResult(ctx).Error(500, "用户不存在", "no users find")
 ```go
 httpfacades.NewResult(ctx).ValidError("验证失败", errors.All())
 ```
-四、分页查询：
+四、分页查询+加上过滤条件：其中conditionMap:map[string]interface{}{}过滤条件,[]string{"excepts"}...为排除的key值
 ```go
-func (r *UserController) Indexs(ctx http.Context) http.Response {
-	users := []models.User{}
-	queries := ctx.Request().Queries()
-	result, _ := httpfacades.NewResult(ctx).SearchByParams(queries,[]string{"excepts"}...).ResultPagination(&users, []string{"Dept"}...)
-	return result
+
+func (r *MaterialController) Index(ctx http.Context) http.Response {
+    var user models.User
+    facades.Auth(ctx).User(&user)
+    partner_id := cast.ToUint(ctx.Value("partner"))
+    materials := []models.Material{}
+    
+    queries := ctx.Request().Queries()
+    conditionMap := map[string]interface{}{
+    "partner_id": partner_id,
+    }
+    result, _ := httpfacades.NewResult(ctx).SearchByParams(queries, conditionMap,[]string{"excepts"}...).ResultPagination(&materials)
+    return result
 }
 ```
 
