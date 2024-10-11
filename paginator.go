@@ -37,6 +37,9 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 		delete(params, except)
 	}
 	query := facades.Orm().Query()
+	for key, val := range conditionMap {
+		query = query.Raw(key+" = ?", val).(orm.Query)
+	}
 	h.Query = func(q orm.Query) orm.Query {
 		for key, value := range params {
 			if value == "" || key == "pageSize" || key == "total" || key == "currentPage" || key == "sort" || key == "order" {
@@ -46,9 +49,6 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 				//q = q.Where(key+" like ?", "%"+value+"%")
 				q = q.Raw(key+" like ?", "%"+value+"%").(orm.Query)
 			}
-		}
-		for key, val := range conditionMap {
-			q = q.Raw(key+" = ?", val).(orm.Query)
 		}
 		return q
 	}(query)
