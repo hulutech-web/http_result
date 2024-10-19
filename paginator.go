@@ -102,3 +102,11 @@ func (r *HttpResult) ResultPagination(dest any, withes ...string) (http.Response
 	// 返回构建好的分页结果
 	return r.Context.Response().Success().Json(pageResult), nil
 }
+
+func (r *HttpResult) List(dest any) (http.Response, error) {
+	err := r.Query.Find(dest)
+	if err != nil {
+		return nil, err
+	}
+	return r.Context.Response().Success().Json(dest), nil
+}
