@@ -47,8 +47,6 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 		for key, val := range conditionMap {
 			q = q.Where(key+" = ?", val).(orm.Query)
 		}
-		timeKey := []string{}
-		ranges := []string{}
 		for key, value := range params {
 			//如果key包含了[]符号
 
@@ -67,15 +65,16 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 				if value == "" {
 					continue
 				}
-				//第一是开始时间，第二个是结束时间
-				ranges = append(ranges, value)
-				timeKey = append(timeKey, key)
+				//按照，拆分value
+				ranges := strings.Split(value, ",")
+				if len(ranges) == 2 {
+					q = q.Where(key+" BETWEEN ? AND ?", ranges[0], ranges[1])
+				} else {
+					continue
+				}
 			}
 		}
-		if len(ranges) == 2 && len(timeKey) == 2 && timeKey[0] == timeKey[1] {
-			q = q.Where(timeKey[0]+" BETWEEN ? AND ?", ranges[0], ranges[1])
-			ranges = []string{}
-		}
+
 		return q
 	}(query)
 	return h
