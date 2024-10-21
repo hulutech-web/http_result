@@ -50,7 +50,7 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 		for key, value := range params {
 			//如果key包含了[]符号
 
-			if !strings.Contains(key, "[]") || value == "" || key == "pageSize" || key == "total" || key == "currentPage" || key == "sort" || key == "order" {
+			if strings.Contains(key, "[]") || value == "" || key == "pageSize" || key == "total" || key == "currentPage" || key == "sort" || key == "order" {
 				continue
 			} else {
 				q = q.Where(gorm.Expr(key+" LIKE ?", "%"+value+"%"))
