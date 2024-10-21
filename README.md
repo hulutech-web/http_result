@@ -75,7 +75,7 @@ func (r *MaterialController) Index(ctx http.Context) http.Response {
 ##### 解释二：查询参数：order仅支持asc,desc默认采用asc,sort表示需要查询的列，order参数和sort参数需要同时出现
 ##### 解释三：前端，可以配合vue组件，https://vxetable.cn，使用效率更高
 ```go
-// Index 用户分页查询，支持搜索，路由参数?name=xxx&pageSize=1&currentPage=1&sort=xxx&order=xxx,等其他任意的查询参数
+// Index 用户分页查询，支持时间，支持搜索，路由参数?name=xxx&pageSize=1&currentPage=1&sort=xxx&order=xxx&created_at[]=xxx&created_at[]=xxx,等其他任意的查询参数
 // @Summary      用户分页查询
 // @Description  用户分页查询
 // @Tags         用户分页查询

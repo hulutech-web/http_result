@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 	"math"
 	"strconv"
+	"strings"
 )
 
 type Meta struct {
@@ -41,16 +42,39 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 
 	// 再处理url查询
 	h.Query = func(q orm.Query) orm.Query {
+		//处理日期时间
 		// 先处理过滤条件
 		for key, val := range conditionMap {
 			q = q.Where(key+" = ?", val).(orm.Query)
 		}
+		timeKey := []string{}
+		ranges := []string{}
 		for key, value := range params {
+			//如果key包含了[]符号
+
 			if value == "" || key == "pageSize" || key == "total" || key == "currentPage" || key == "sort" || key == "order" {
 				continue
 			} else {
 				q = q.Where(gorm.Expr(key+" LIKE ?", "%"+value+"%"))
 			}
+			//则表示是日期时间范围
+			/**
+			created_at[]: 2024-10-21 00:00:00
+			created_at[]: 2024-10-21 23:59:59
+			*/
+			if strings.Contains(key, "[]") {
+				key = strings.Replace(key, "[]", "", -1)
+				if value == "" {
+					continue
+				}
+				//第一是开始时间，第二个是结束时间
+				ranges = append(ranges, value)
+				timeKey = append(timeKey, key)
+			}
+		}
+		if len(ranges) == 2 && len(timeKey) == 2 && timeKey[0] == timeKey[1] {
+			q = q.Where(timeKey[0]+" BETWEEN ? AND ?", ranges[0], ranges[1])
+			ranges = []string{}
 		}
 		return q
 	}(query)
