@@ -42,9 +42,22 @@ func (h *HttpResult) Success(message string, data interface{}) http.Response {
 		message = facades.Config().GetString("http_result.Message")
 	}
 	//查询的结果有可能存在data为nil的情况，判断如果是nil则，给定一个[]string{}类型的数据，避免前端页面报错
+	//或者判断data的slice类型的长度为0
+	res := []string{}
 	if data == nil {
-		data = []string{}
+		return h.Context.Response().Success().Json(http.Json{
+			"message": message,
+			"data":    res,
+		})
 	}
+	slice, ok := data.([]interface{})
+	if ok && len(slice) == 0 {
+		return h.Context.Response().Success().Json(http.Json{
+			"message": message,
+			"data":    res,
+		})
+	}
+
 	return h.Context.Response().Success().Json(http.Json{
 		"message": message,
 		"data":    data,
