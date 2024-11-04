@@ -32,6 +32,18 @@ type PageResult struct {
 	Meta  Meta  `json:"meta"`
 }
 
+func (h *HttpResult) SearchByIncludes(column string, values []interface{}) *HttpResult {
+	// 再处理url查询
+	query := facades.Orm().Query()
+	h.Query = func(q orm.Query) orm.Query {
+		//处理日期时间
+		// 先处理过滤条件
+		q = q.Where(column+" in ?", values).(orm.Query)
+		return q
+	}(query)
+	return h
+}
+
 // SearchByParams
 // ?name=xxx&pageSize=1&currentPage=1&sort=xxx&order=xxx
 func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[string]interface{}, excepts ...string) *HttpResult {

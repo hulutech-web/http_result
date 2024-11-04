@@ -31,6 +31,7 @@ type HttpResult struct {
 func NewResult(ctx http.Context) *HttpResult {
 	return &HttpResult{
 		Context: ctx,
+		Query:   facades.Orm().Query(),
 	}
 }
 
