@@ -32,7 +32,7 @@ type PageResult struct {
 	Meta  Meta  `json:"meta"`
 }
 
-func (h *HttpResult) SearchByIncludes(column string, values []interface{}) *HttpResult {
+func (h *HttpResult) SearchByIncludes(column string, values []any) *HttpResult {
 	// 再处理url查询
 	query := facades.Orm().Query()
 	h.Query = func(q orm.Query) orm.Query {
