@@ -86,6 +86,8 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 				}
 			}
 		}
+		//默认按照时间降序排序
+		q.Order("id desc")
 
 		return q
 	}(query)
