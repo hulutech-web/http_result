@@ -86,8 +86,6 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 				}
 			}
 		}
-		//默认按照时间降序排序
-		q.Order("id desc")
 
 		return q
 	}(query)
@@ -104,6 +102,8 @@ func (r *HttpResult) ResultPagination(dest any, withes ...string) (http.Response
 	for _, with := range withes {
 		r.Query = r.Query.With(with)
 	}
+	//默认按照时间降序排序
+	r.Query.OrderBy("id", "desc")
 	r.Query.Paginate(currentPageInt, pageSizeInt, dest, &total)
 
 	URL_PATH := r.Context.Request().Origin().URL.Path
