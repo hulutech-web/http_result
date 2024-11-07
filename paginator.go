@@ -52,8 +52,6 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 	}
 	query := facades.Orm().Query()
 
-	//默认按照时间降序排序
-	query.OrderBy("id", "desc")
 	// 再处理url查询
 	h.Query = func(q orm.Query) orm.Query {
 		//处理日期时间
@@ -104,6 +102,7 @@ func (r *HttpResult) ResultPagination(dest any, withes ...string) (http.Response
 	for _, with := range withes {
 		r.Query = r.Query.With(with)
 	}
+	r.Query = r.Query.OrderByDesc("id")
 	r.Query.Paginate(currentPageInt, pageSizeInt, dest, &total)
 
 	URL_PATH := r.Context.Request().Origin().URL.Path
