@@ -55,6 +55,7 @@ func (h *HttpResult) SearchByIncludes(column string, values []any) *HttpResult {
 }
 
 // SearchByParams
+// example SearchByParams(map[string]{}{"name":"user"}, map[string]interface{}{"state",1}, []string{"age"}...)
 // ?name=xxx&pageSize=1&currentPage=1&sort=xxx&order=xxx
 func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[string]interface{}, excepts ...string) *HttpResult {
 	for _, except := range excepts {
