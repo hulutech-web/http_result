@@ -34,14 +34,24 @@ type PageResult struct {
 
 func (h *HttpResult) SearchByIncludes(column string, values []any) *HttpResult {
 	// 再处理url查询
-	query := facades.Orm().Query()
-	h.Query = func(q orm.Query) orm.Query {
-		//处理日期时间
-		// 先处理过滤条件
-		q = q.Where(column+" in ?", values).(orm.Query)
-		return q
-	}(query)
-	return h
+	if h.Query != nil {
+		h.Query = func(q orm.Query) orm.Query {
+			//处理日期时间
+			// 先处理过滤条件
+			q = q.Where(column+" in ?", values).(orm.Query)
+			return q
+		}(h.Query)
+		return h
+	} else {
+		query := facades.Orm().Query()
+		h.Query = func(q orm.Query) orm.Query {
+			//处理日期时间
+			// 先处理过滤条件
+			q = q.Where(column+" in ?", values).(orm.Query)
+			return q
+		}(query)
+		return h
+	}
 }
 
 // SearchByParams
@@ -50,45 +60,84 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 	for _, except := range excepts {
 		delete(params, except)
 	}
-	query := facades.Orm().Query()
-
-	// 再处理url查询
-	h.Query = func(q orm.Query) orm.Query {
-		//处理日期时间
-		// 先处理过滤条件
-		for key, val := range conditionMap {
-			q = q.Where(key+" = ?", val).(orm.Query)
-		}
-		for key, value := range params {
-			//如果key包含了[]符号
-
-			if strings.Contains(key, "[]") || value == "" || key == "pageSize" || key == "total" || key == "currentPage" || key == "sort" || key == "order" {
-				continue
-			} else {
-				q = q.Where(gorm.Expr(key+" LIKE ?", "%"+value+"%"))
+	if h.Query != nil {
+		query := facades.Orm().Query()
+		// 再处理url查询
+		h.Query = func(q orm.Query) orm.Query {
+			//处理日期时间
+			// 先处理过滤条件
+			for key, val := range conditionMap {
+				q = q.Where(key+" = ?", val).(orm.Query)
 			}
-			//则表示是日期时间范围
-			/**
-			created_at[]: 2024-10-21 00:00:00
-			created_at[]: 2024-10-21 23:59:59
-			*/
-			if strings.Contains(key, "[]") {
-				key = strings.Replace(key, "[]", "", -1)
-				if value == "" {
+			for key, value := range params {
+				//如果key包含了[]符号
+
+				if strings.Contains(key, "[]") || value == "" || key == "pageSize" || key == "total" || key == "currentPage" || key == "sort" || key == "order" {
 					continue
-				}
-				//按照，拆分value
-				ranges := strings.Split(value, ",")
-				if len(ranges) == 2 {
-					q = q.Where(key+" BETWEEN ? AND ?", ranges[0], ranges[1])
 				} else {
-					continue
+					q = q.Where(gorm.Expr(key+" LIKE ?", "%"+value+"%"))
+				}
+				//则表示是日期时间范围
+				/**
+				created_at[]: 2024-10-21 00:00:00
+				created_at[]: 2024-10-21 23:59:59
+				*/
+				if strings.Contains(key, "[]") {
+					key = strings.Replace(key, "[]", "", -1)
+					if value == "" {
+						continue
+					}
+					//按照，拆分value
+					ranges := strings.Split(value, ",")
+					if len(ranges) == 2 {
+						q = q.Where(key+" BETWEEN ? AND ?", ranges[0], ranges[1])
+					} else {
+						continue
+					}
 				}
 			}
-		}
 
-		return q
-	}(query)
+			return q
+		}(query)
+	} else {
+		h.Query = func(q orm.Query) orm.Query {
+			//处理日期时间
+			// 先处理过滤条件
+			for key, val := range conditionMap {
+				q = q.Where(key+" = ?", val).(orm.Query)
+			}
+			for key, value := range params {
+				//如果key包含了[]符号
+
+				if strings.Contains(key, "[]") || value == "" || key == "pageSize" || key == "total" || key == "currentPage" || key == "sort" || key == "order" {
+					continue
+				} else {
+					q = q.Where(gorm.Expr(key+" LIKE ?", "%"+value+"%"))
+				}
+				//则表示是日期时间范围
+				/**
+				created_at[]: 2024-10-21 00:00:00
+				created_at[]: 2024-10-21 23:59:59
+				*/
+				if strings.Contains(key, "[]") {
+					key = strings.Replace(key, "[]", "", -1)
+					if value == "" {
+						continue
+					}
+					//按照，拆分value
+					ranges := strings.Split(value, ",")
+					if len(ranges) == 2 {
+						q = q.Where(key+" BETWEEN ? AND ?", ranges[0], ranges[1])
+					} else {
+						continue
+					}
+				}
+			}
+
+			return q
+		}(h.Query)
+	}
+
 	return h
 }
 
