@@ -142,7 +142,14 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 	return h
 }
 
-func (r *HttpResult) ResultPagination(dest any, withes ...string) (http.Response, error) {
+/**
+result.ResultPagination(&users, []map[string]func(query orm.Query) orm.Query{
+    {"posts": func(q orm.Query) orm.Query {
+        return q.Where("status = ?", "published")
+    }},
+})
+*/
+func (r *HttpResult) ResultPagination(dest any, withes ...[]map[string]func(query orm.Query) orm.Query) (http.Response, error) {
 	message := facades.Config().GetString("http_result.Message")
 	request := r.Context.Request()
 	pageSize := request.Query("pageSize", "10")
@@ -151,7 +158,19 @@ func (r *HttpResult) ResultPagination(dest any, withes ...string) (http.Response
 	currentPageInt := cast.ToInt(currentPage)
 	total := int64(0)
 	for _, with := range withes {
-		r.Query = r.Query.With(with)
+		for relation, callback := range with {
+			if callback != nil {
+				r.Query = r.Query.With([]map[string]func(query orm.Query) orm.Query{
+					{relation: callback},
+				})
+			} else {
+				r.Query = r.Query.With([]map[string]func(query orm.Query) orm.Query{
+					{relation: func(query orm.Query) orm.Query {
+						return query
+					}},
+				})
+			}
+		}
 	}
 	r.Query = r.Query.OrderByDesc("id")
 	r.Query.Paginate(currentPageInt, pageSizeInt, dest, &total)
