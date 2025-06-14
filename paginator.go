@@ -143,20 +143,34 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 }
 
 /**
+ * 关联查询配置
+ */
+type WithConfig struct {
+	Relation string
+	Callback func(query orm.Query) orm.Query
+}
+
+/**
  * 分页查询方法
  * @param dest 目标数据
  * @param withes 关联查询配置，支持多个关联和可选的回调函数
  * 示例：
- * result.ResultPagination(&books, []map[string]func(query orm.Query) orm.Query{
- *     {"Author": func(q orm.Query) orm.Query {
- *         return q.Where("name = ?", "author")
- *     }},
- *     {"Comments": func(q orm.Query) orm.Query {
- *         return q.Where("status = ?", "active")
- *     }},
+ * result.ResultPagination(&books, []WithConfig{
+ *     {
+ *         Relation: "Author",
+ *         Callback: func(q orm.Query) orm.Query {
+ *             return q.Where("name = ?", "author")
+ *         },
+ *     },
+ *     {
+ *         Relation: "Comments",
+ *         Callback: func(q orm.Query) orm.Query {
+ *             return q.Where("status = ?", "active")
+ *         },
+ *     },
  * })
  */
-func (r *HttpResult) ResultPagination(dest any, withes ...[]map[string]func(query orm.Query) orm.Query) (http.Response, error) {
+func (r *HttpResult) ResultPagination(dest any, withes ...[]WithConfig) (http.Response, error) {
 	message := facades.Config().GetString("http_result.Message")
 	request := r.Context.Request()
 	pageSize := request.Query("pageSize", "10")
@@ -168,11 +182,12 @@ func (r *HttpResult) ResultPagination(dest any, withes ...[]map[string]func(quer
 	// 处理关联查询
 	if len(withes) > 0 {
 		for _, with := range withes {
-			for relation, callback := range with {
-				if callback != nil {
-					r.Query = r.Query.With(relation, callback)
+			for i := 0; i < len(with); i++ {
+				config := with[i]
+				if config.Callback != nil {
+					r.Query = r.Query.With(config.Relation, config.Callback)
 				} else {
-					r.Query = r.Query.With(relation)
+					r.Query = r.Query.With(config.Relation)
 				}
 			}
 		}
