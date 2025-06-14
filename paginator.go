@@ -143,12 +143,19 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 }
 
 /**
-result.ResultPagination(&users, []map[string]func(query orm.Query) orm.Query{
-    {"posts": func(q orm.Query) orm.Query {
-        return q.Where("status = ?", "published")
-    }},
-})
-*/
+ * 分页查询方法
+ * @param dest 目标数据
+ * @param withes 关联查询配置，支持多个关联和可选的回调函数
+ * 示例：
+ * result.ResultPagination(&books, []map[string]func(query orm.Query) orm.Query{
+ *     {"Author": func(q orm.Query) orm.Query {
+ *         return q.Where("name = ?", "author")
+ *     }},
+ *     {"Comments": func(q orm.Query) orm.Query {
+ *         return q.Where("status = ?", "active")
+ *     }},
+ * })
+ */
 func (r *HttpResult) ResultPagination(dest any, withes ...[]map[string]func(query orm.Query) orm.Query) (http.Response, error) {
 	message := facades.Config().GetString("http_result.Message")
 	request := r.Context.Request()
@@ -157,21 +164,20 @@ func (r *HttpResult) ResultPagination(dest any, withes ...[]map[string]func(quer
 	currentPage := request.Query("currentPage", "1")
 	currentPageInt := cast.ToInt(currentPage)
 	total := int64(0)
-	for _, with := range withes {
-		for relation, callback := range with {
-			if callback != nil {
-				r.Query = r.Query.With([]map[string]func(query orm.Query) orm.Query{
-					{relation: callback},
-				})
-			} else {
-				r.Query = r.Query.With([]map[string]func(query orm.Query) orm.Query{
-					{relation: func(query orm.Query) orm.Query {
-						return query
-					}},
-				})
+
+	// 处理关联查询
+	if len(withes) > 0 {
+		for _, with := range withes {
+			for relation, callback := range with {
+				if callback != nil {
+					r.Query = r.Query.With(relation, callback)
+				} else {
+					r.Query = r.Query.With(relation)
+				}
 			}
 		}
 	}
+
 	r.Query = r.Query.OrderByDesc("id")
 	r.Query.Paginate(currentPageInt, pageSizeInt, dest, &total)
 
