@@ -69,14 +69,16 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 			}
 			// 判断params中如有同时存在order和sort字段，并且order字段必须在模型中有才可以，sort必须是asc和desc中的一个，否则不执行排序
 			if params["order"] != "" && params["sort"] != "" {
-				q = q.Order(params["order"] + " " + params["sort"])
+				q = q.Order(params["sort"] + " " + params["order"])
 			}
 			for key, value := range params {
 				// 再判断order和sort字段，1、要求必须同时具有这两个字段，2、order字段必须在模型中有才可以，2sort必须是asc和desc中的一个，否则不执行排序
 				if key == "pageSize" || key == "total" || key == "currentPage" || key == "order" || key == "sort" {
 					continue
 				} else {
-					q = q.Where(gorm.Expr(key+" LIKE ?", "%"+value+"%"))
+					if value != "" {
+						q = q.Where(gorm.Expr(key+" LIKE ?", "%"+value+"%"))
+					}
 				}
 
 			}
@@ -91,16 +93,20 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 			}
 			// 判断params中如有同时存在order和sort字段，并且order字段必须在模型中有才可以，sort必须是asc和desc中的一个，否则不执行排序
 			if params["order"] != "" && params["sort"] != "" {
-				q = q.Order(params["order"] + " " + params["sort"])
+				q = q.Order(params["sort"] + " " + params["order"])
 			}
 			for key, value := range params {
 				// 再判断order和sort字段，1、要求必须同时具有这两个字段，2、order字段必须在模型中有才可以，2sort必须是asc和desc中的一个，否则不执行排序
 				if key == "pageSize" || key == "total" || key == "currentPage" || key == "order" || key == "sort" {
 					continue
 				} else {
-					q = q.Where(gorm.Expr(key+" LIKE ?", "%"+value+"%"))
+					if value != "" {
+						q = q.Where(gorm.Expr(key+" LIKE ?", "%"+value+"%"))
+					}
 				}
+
 			}
+
 			return q
 		}(h.Query)
 	}
