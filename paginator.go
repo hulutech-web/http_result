@@ -1,14 +1,15 @@
 package http_result
 
 import (
+	"math"
+	"strconv"
+	"strings"
+
 	"github.com/goravel/framework/contracts/database/orm"
 	"github.com/goravel/framework/contracts/http"
 	"github.com/goravel/framework/facades"
 	"github.com/spf13/cast"
 	"gorm.io/gorm"
-	"math"
-	"strconv"
-	"strings"
 )
 
 type Meta struct {
@@ -73,28 +74,15 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 			for key, value := range params {
 				//如果key包含了[]符号
 
-				if strings.Contains(key, "[]") || value == "" || key == "pageSize" || key == "total" || key == "currentPage" || key == "sort" || key == "order" {
+				if strings.Contains(key, "[]") || value == "" || key == "pageSize" || key == "total" || key == "currentPage" {
 					continue
 				} else {
 					q = q.Where(gorm.Expr(key+" LIKE ?", "%"+value+"%"))
 				}
-				//则表示是日期时间范围
-				/**
-				created_at[]: 2024-10-21 00:00:00
-				created_at[]: 2024-10-21 23:59:59
-				*/
-				if strings.Contains(key, "[]") {
-					key = strings.Replace(key, "[]", "", -1)
-					if value == "" {
-						continue
-					}
-					//按照，拆分value
-					ranges := strings.Split(value, ",")
-					if len(ranges) == 2 {
-						q = q.Where(key+" BETWEEN ? AND ?", ranges[0], ranges[1])
-					} else {
-						continue
-					}
+
+				// 再判断order和sort字段，1、要求必须同时具有这两个字段，2、order字段必须在模型中有才可以，2sort必须是asc和desc中的一个，否则不执行排序
+				if key == "sort" && value == "asc" || key == "sort" && value == "desc" {
+					q = q.OrderBy(key + " " + value)
 				}
 			}
 
@@ -115,23 +103,10 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 				} else {
 					q = q.Where(gorm.Expr(key+" LIKE ?", "%"+value+"%"))
 				}
-				//则表示是日期时间范围
-				/**
-				created_at[]: 2024-10-21 00:00:00
-				created_at[]: 2024-10-21 23:59:59
-				*/
-				if strings.Contains(key, "[]") {
-					key = strings.Replace(key, "[]", "", -1)
-					if value == "" {
-						continue
-					}
-					//按照，拆分value
-					ranges := strings.Split(value, ",")
-					if len(ranges) == 2 {
-						q = q.Where(key+" BETWEEN ? AND ?", ranges[0], ranges[1])
-					} else {
-						continue
-					}
+
+				// 再判断order和sort字段，1、要求必须同时具有这两个字段，2、order字段必须在模型中有才可以，2sort必须是asc和desc中的一个，否则不执行排序
+				if key == "sort" && value == "asc" || key == "sort" && value == "desc" {
+					q = q.OrderBy(key + " " + value)
 				}
 			}
 
