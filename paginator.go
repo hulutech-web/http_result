@@ -3,7 +3,6 @@ package http_result
 import (
 	"math"
 	"strconv"
-	"strings"
 
 	"github.com/goravel/framework/contracts/database/orm"
 	"github.com/goravel/framework/contracts/http"
@@ -37,18 +36,16 @@ func (h *HttpResult) SearchByIncludes(column string, values []any) *HttpResult {
 	// 再处理url查询
 	if h.Query != nil {
 		h.Query = func(q orm.Query) orm.Query {
-			//处理日期时间
 			// 先处理过滤条件
-			q = q.Where(column+" in ?", values).(orm.Query)
+			q = q.Where(column+" in ?", values)
 			return q
 		}(h.Query)
 		return h
 	} else {
 		query := facades.Orm().Query()
 		h.Query = func(q orm.Query) orm.Query {
-			//处理日期时间
 			// 先处理过滤条件
-			q = q.Where(column+" in ?", values).(orm.Query)
+			q = q.Where(column+" in ?", values)
 			return q
 		}(query)
 		return h
@@ -66,50 +63,44 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 		query := facades.Orm().Query()
 		// 再处理url查询
 		h.Query = func(q orm.Query) orm.Query {
-			//处理日期时间
 			// 先处理过滤条件
 			for key, val := range conditionMap {
-				q = q.Where(key+" = ?", val).(orm.Query)
+				q = q.Where(key+" = ?", val)
+			}
+			// 判断params中如有同时存在order和sort字段，并且order字段必须在模型中有才可以，sort必须是asc和desc中的一个，否则不执行排序
+			if params["order"] != "" && params["sort"] != "" {
+				q = q.OrderBy(params["order"] + " " + params["sort"])
 			}
 			for key, value := range params {
-				//如果key包含了[]符号
-
-				if strings.Contains(key, "[]") || value == "" || key == "pageSize" || key == "total" || key == "currentPage" {
+				// 再判断order和sort字段，1、要求必须同时具有这两个字段，2、order字段必须在模型中有才可以，2sort必须是asc和desc中的一个，否则不执行排序
+				if key == "pageSize" || key == "total" || key == "currentPage" || key == "order" || key == "sort" {
 					continue
 				} else {
 					q = q.Where(gorm.Expr(key+" LIKE ?", "%"+value+"%"))
 				}
 
-				// 再判断order和sort字段，1、要求必须同时具有这两个字段，2、order字段必须在模型中有才可以，2sort必须是asc和desc中的一个，否则不执行排序
-				if key == "sort" && value == "asc" || key == "sort" && value == "desc" {
-					q = q.OrderBy(key + " " + value)
-				}
 			}
 
 			return q
 		}(query)
 	} else {
 		h.Query = func(q orm.Query) orm.Query {
-			//处理日期时间
 			// 先处理过滤条件
 			for key, val := range conditionMap {
-				q = q.Where(key+" = ?", val).(orm.Query)
+				q = q.Where(key+" = ?", val)
+			}
+			// 判断params中如有同时存在order和sort字段，并且order字段必须在模型中有才可以，sort必须是asc和desc中的一个，否则不执行排序
+			if params["order"] != "" && params["sort"] != "" {
+				q = q.OrderBy(params["order"] + " " + params["sort"])
 			}
 			for key, value := range params {
-				//如果key包含了[]符号
-
-				if strings.Contains(key, "[]") || value == "" || key == "pageSize" || key == "total" || key == "currentPage" || key == "sort" || key == "order" {
+				// 再判断order和sort字段，1、要求必须同时具有这两个字段，2、order字段必须在模型中有才可以，2sort必须是asc和desc中的一个，否则不执行排序
+				if key == "pageSize" || key == "total" || key == "currentPage" || key == "order" || key == "sort" {
 					continue
 				} else {
 					q = q.Where(gorm.Expr(key+" LIKE ?", "%"+value+"%"))
 				}
-
-				// 再判断order和sort字段，1、要求必须同时具有这两个字段，2、order字段必须在模型中有才可以，2sort必须是asc和desc中的一个，否则不执行排序
-				if key == "sort" && value == "asc" || key == "sort" && value == "desc" {
-					q = q.OrderBy(key + " " + value)
-				}
 			}
-
 			return q
 		}(h.Query)
 	}
