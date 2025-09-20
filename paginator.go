@@ -69,7 +69,7 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 			}
 			// 判断params中如有同时存在order和sort字段，并且order字段必须在模型中有才可以，sort必须是asc和desc中的一个，否则不执行排序
 			if params["order"] != "" && params["sort"] != "" {
-				q = q.OrderBy(params["order"] + " " + params["sort"])
+				q = q.Order(params["order"] + " " + params["sort"])
 			}
 			for key, value := range params {
 				// 再判断order和sort字段，1、要求必须同时具有这两个字段，2、order字段必须在模型中有才可以，2sort必须是asc和desc中的一个，否则不执行排序
@@ -91,7 +91,7 @@ func (h *HttpResult) SearchByParams(params map[string]string, conditionMap map[s
 			}
 			// 判断params中如有同时存在order和sort字段，并且order字段必须在模型中有才可以，sort必须是asc和desc中的一个，否则不执行排序
 			if params["order"] != "" && params["sort"] != "" {
-				q = q.OrderBy(params["order"] + " " + params["sort"])
+				q = q.Order(params["order"] + " " + params["sort"])
 			}
 			for key, value := range params {
 				// 再判断order和sort字段，1、要求必须同时具有这两个字段，2、order字段必须在模型中有才可以，2sort必须是asc和desc中的一个，否则不执行排序
@@ -159,7 +159,7 @@ func (r *HttpResult) ResultPagination(dest any, withes ...[]WithConfig) (http.Re
 		}
 	}
 
-	r.Query = r.Query.OrderByDesc("id")
+	// r.Query = r.Query.OrderByDesc("id")
 	r.Query.Paginate(currentPageInt, pageSizeInt, dest, &total)
 
 	URL_PATH := r.Context.Request().Origin().URL.Path
